@@ -1,0 +1,102 @@
+import { useRef, useState } from "react";
+import { AuthToken, Status } from "tweeter-shared";
+import { useMessageActions } from "../toaster/MessageHooks";
+import { useUserInfo } from "../userInfo/UserInfoHooks";
+import { PostStatusView, PostStatusPresenter } from "../../presenter/PostStatusPresenter";
+
+interface Props{
+  presenterFactory?: PostStatusPresenter;
+}
+
+const PostStatus = (props: Props) => {
+
+  const { currentUser, authToken } = useUserInfo();
+  const [post, setPost] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+    const { displayErrorMessage, displayInfoMessage, deleteMessage } = useMessageActions();
+
+  const listener: PostStatusView = {
+    displayErrorMessage: displayErrorMessage,
+    setIsLoading: setIsLoading,
+    displayInfoMessage: displayInfoMessage,
+    setPost: setPost,
+    deleteMessage: deleteMessage
+    }
+  
+    const presenterRef = useRef<PostStatusPresenter | null >(null)
+        if (!presenterRef.current){
+          presenterRef.current = props.presenterFactory ?? new PostStatusPresenter(listener);
+        }
+
+  const submitPost = async (event: React.MouseEvent) => {
+      event.preventDefault();
+      presenterRef.current?.submitPost(event, post, currentUser!, authToken!)
+
+    
+  };
+
+  const clearPost = (event: React.MouseEvent) => {
+    event.preventDefault();
+    setPost("");
+  };
+
+  const checkButtonStatus: () => boolean = () => {
+    return !post.trim() || !authToken || !currentUser;
+  };
+
+  return (
+    <form>
+      <div className="form-group mb-3">
+        <textarea
+          className="form-control"
+          id="postStatusTextArea"
+          rows={10}
+          placeholder="What's on your mind?"
+          value={post}
+          onChange={(event) => {
+            setPost(event.target.value);
+          }}
+        />
+      </div>
+      <div className="form-group">
+        <button
+          id="postStatusButton"
+          className="btn btn-md btn-primary me-1"
+          type="button"
+          disabled={checkButtonStatus()}
+          style={{ width: "8em" }}
+          onClick={submitPost}
+        >
+          {isLoading ? (
+            <span
+              className="spinner-border spinner-border-sm"
+              role="status"
+              aria-hidden="true"
+            ></span>
+          ) : (
+            <div>Post Status</div>
+          )}
+        </button>
+        <button
+          id="clearStatusButton"
+          className="btn btn-md btn-secondary"
+          type="button"
+          disabled={checkButtonStatus()}
+          onClick={clearPost}
+        >
+          Clear
+        </button>
+      </div>
+    </form>
+  );
+};
+
+export default PostStatus;
+function displayErrorMessage(message: string): void {
+  throw new Error("Function not implemented.");
+}
+
+function deleteMessage(messageId: string): void {
+  throw new Error("Function not implemented.");
+}
+
