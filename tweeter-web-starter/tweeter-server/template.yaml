@@ -275,6 +275,21 @@ Resources:
             RestApiId: !Ref tweeterApi
             Path: /follow/unfollow
             Method: POST
+
+  IsFollowerStatusFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: tweeter-get-is-follower-status
+      ##### Modify Handler property to match your code.
+      Handler: lambda/follow/GetIsFollowerStatusLambda.handler
+      Policies: *commonPolicies
+      Events:
+        PostApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref tweeterApi
+            Path: /follow/is-follower-status
+            Method: POST
   #
   # ADD MORE WEB API LAMBDA DEFINITIONS HERE
   #

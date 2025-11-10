@@ -25,9 +25,11 @@ export type {UserDto} from "./model/dto/UserDto";
 export type { PagedUserItemRequest } from "./model/domain/net/request/PagedUserItemRequest";
 export type { FollowCountRequest } from "./model/domain/net/request/FollowCountRequest";
 export type { FollowRequest } from "./model/domain/net/request/FollowRequest";
+export type { GetIsFollowerStatusRequest } from "./model/domain/net/request/GetIsFollowerStatusRequest";
 //
 // Responses
 //
 export type { PagedUserItemResponse } from "./model/domain/net/response/PagedUserItemResponse";
 export type { FollowCountResponse } from "./model/domain/net/response/FollowCountResponse";
 export type { FollowResponse } from "./model/domain/net/response/FollowResponse";
+export type { GetIsFollowerStatusResponse } from "./model/domain/net/response/GetIsFollowerStatusResponse";

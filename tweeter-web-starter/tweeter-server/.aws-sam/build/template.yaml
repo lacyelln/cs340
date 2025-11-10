@@ -401,6 +401,29 @@ Resources:
       CodeUri: UnfollowFunction
     Metadata:
       SamResourceId: UnfollowFunction
+  IsFollowerStatusFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: tweeter-get-is-follower-status
+      Handler: lambda/follow/GetIsFollowerStatusLambda.handler
+      Policies:
+      - AWSLambdaBasicExecutionRole
+      - AmazonSESFullAccess
+      - CloudWatchFullAccess
+      - AmazonDynamoDBFullAccess
+      - AmazonS3FullAccess
+      - AmazonSQSFullAccess
+      Events:
+        PostApi:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: tweeterApi
+            Path: /follow/is-follower-status
+            Method: POST
+      CodeUri: IsFollowerStatusFunction
+    Metadata:
+      SamResourceId: IsFollowerStatusFunction
   followTable:
     Type: AWS::DynamoDB::Table
     Properties:
