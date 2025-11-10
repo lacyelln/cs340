@@ -1,5 +1,5 @@
 export interface GetIsFollowerStatusRequest{
-    token: string, 
-    userName: string, 
-    selectedUserName: string
+    readonly token: string, 
+    readonly userName: string, 
+    readonly selectedUserName: string
 }

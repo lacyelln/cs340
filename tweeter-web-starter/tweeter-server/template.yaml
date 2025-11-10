@@ -290,6 +290,53 @@ Resources:
             RestApiId: !Ref tweeterApi
             Path: /follow/is-follower-status
             Method: POST
+
+  LoadMoreFeedItemsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: tweeter-load-more-feed-items
+      ##### Modify Handler property to match your code.
+      Handler: lambda/status/LoadMoreFeedItemsLambda.handler
+      Policies: *commonPolicies
+      Events:
+        PostApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref tweeterApi
+            Path: /status/load-more-feed-items
+            Method: POST
+
+  LoadMoreStoryItemsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: tweeter-load-more-story-items
+      ##### Modify Handler property to match your code.
+      Handler: lambda/status/LoadMoreStoryItemsLambda.handler
+      Policies: *commonPolicies
+      Events:
+        PostApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref tweeterApi
+            Path: /status/load-more-story-items
+            Method: POST
+
+  PostStatusFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: tweeter-post-status
+      ##### Modify Handler property to match your code.
+      Handler: lambda/status/PostStatusLambda.handler
+      Policies: *commonPolicies
+      Events:
+        PostApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref tweeterApi
+            Path: /status/post-status
+            Method: POST
+
+
   #
   # ADD MORE WEB API LAMBDA DEFINITIONS HERE
   #

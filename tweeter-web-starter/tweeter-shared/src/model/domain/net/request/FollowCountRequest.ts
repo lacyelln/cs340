@@ -1,4 +1,4 @@
 export interface FollowCountRequest {
-    token: string, 
-    userAlias: string
+    readonly token: string, 
+    readonly userAlias: string
 }

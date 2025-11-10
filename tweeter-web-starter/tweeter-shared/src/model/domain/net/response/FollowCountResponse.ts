@@ -1,3 +1,3 @@
 export interface FollowCountResponse{
-    count: number
+    readonly count: number
 }

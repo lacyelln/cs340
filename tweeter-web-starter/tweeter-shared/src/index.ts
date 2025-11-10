@@ -17,7 +17,8 @@ export { FakeData } from "./util/FakeData";
 //
 // DTOs
 //
-export type {UserDto} from "./model/dto/UserDto";
+export type { UserDto } from "./model/dto/UserDto";
+export type { StatusDto } from "./model/dto/StatusDto";
 
 //
 // Requests
@@ -26,6 +27,8 @@ export type { PagedUserItemRequest } from "./model/domain/net/request/PagedUserI
 export type { FollowCountRequest } from "./model/domain/net/request/FollowCountRequest";
 export type { FollowRequest } from "./model/domain/net/request/FollowRequest";
 export type { GetIsFollowerStatusRequest } from "./model/domain/net/request/GetIsFollowerStatusRequest";
+export type { LoadMoreItemsRequest } from "./model/domain/net/request/LoadMoreItemsRequest";
+export type { PostStatusRequest } from "./model/domain/net/request/PostStatusRequest";
 //
 // Responses
 //
@@ -33,3 +36,5 @@ export type { PagedUserItemResponse } from "./model/domain/net/response/PagedUse
 export type { FollowCountResponse } from "./model/domain/net/response/FollowCountResponse";
 export type { FollowResponse } from "./model/domain/net/response/FollowResponse";
 export type { GetIsFollowerStatusResponse } from "./model/domain/net/response/GetIsFollowerStatusResponse";
+export type { LoadMoreItemsResponse } from "./model/domain/net/response/LoadMoreItemsResponse";
+export type { PostStatusResponse } from "./model/domain/net/response/PostStatusResponse";

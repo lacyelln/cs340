@@ -1,4 +1,4 @@
 export interface FollowRequest {
-    token: string, 
-    userToFollow: string
+    readonly token: string, 
+    readonly userToFollow: string
 }
