@@ -336,7 +336,66 @@ Resources:
             Path: /status/post-status
             Method: POST
 
+  GetUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: tweeter-get-user
+      ##### Modify Handler property to match your code.
+      Handler: lambda/user/GetUserLambda.handler
+      Policies: *commonPolicies
+      Events:
+        PostApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref tweeterApi
+            Path: /user/get-user
+            Method: POST
 
+  LoginFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: tweeter-login
+      ##### Modify Handler property to match your code.
+      Handler: lambda/user/LoginLambda.handler
+      Policies: *commonPolicies
+      Events:
+        PostApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref tweeterApi
+            Path: /user/login
+            Method: POST
+
+  RegisterFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: tweeter-register
+      ##### Modify Handler property to match your code.
+      Handler: lambda/user/RegisterLambda.handler
+      Policies: *commonPolicies
+      Events:
+        PostApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref tweeterApi
+            Path: /user/register
+            Method: POST
+
+
+  LogoutFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: tweeter-logout
+      ##### Modify Handler property to match your code.
+      Handler: lambda/user/LogoutLambda.handler
+      Policies: *commonPolicies
+      Events:
+        PostApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref tweeterApi
+            Path: /user/logout
+            Method: POST
   #
   # ADD MORE WEB API LAMBDA DEFINITIONS HERE
   #

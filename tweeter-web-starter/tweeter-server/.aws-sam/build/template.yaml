@@ -493,6 +493,98 @@ Resources:
       CodeUri: PostStatusFunction
     Metadata:
       SamResourceId: PostStatusFunction
+  GetUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: tweeter-get-user
+      Handler: lambda/user/GetUserLambda.handler
+      Policies:
+      - AWSLambdaBasicExecutionRole
+      - AmazonSESFullAccess
+      - CloudWatchFullAccess
+      - AmazonDynamoDBFullAccess
+      - AmazonS3FullAccess
+      - AmazonSQSFullAccess
+      Events:
+        PostApi:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: tweeterApi
+            Path: /user/get-user
+            Method: POST
+      CodeUri: GetUserFunction
+    Metadata:
+      SamResourceId: GetUserFunction
+  LoginFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: tweeter-login
+      Handler: lambda/user/LoginLambda.handler
+      Policies:
+      - AWSLambdaBasicExecutionRole
+      - AmazonSESFullAccess
+      - CloudWatchFullAccess
+      - AmazonDynamoDBFullAccess
+      - AmazonS3FullAccess
+      - AmazonSQSFullAccess
+      Events:
+        PostApi:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: tweeterApi
+            Path: /user/login
+            Method: POST
+      CodeUri: LoginFunction
+    Metadata:
+      SamResourceId: LoginFunction
+  RegisterFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: tweeter-register
+      Handler: lambda/user/RegisterLambda.handler
+      Policies:
+      - AWSLambdaBasicExecutionRole
+      - AmazonSESFullAccess
+      - CloudWatchFullAccess
+      - AmazonDynamoDBFullAccess
+      - AmazonS3FullAccess
+      - AmazonSQSFullAccess
+      Events:
+        PostApi:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: tweeterApi
+            Path: /user/register
+            Method: POST
+      CodeUri: RegisterFunction
+    Metadata:
+      SamResourceId: RegisterFunction
+  LogoutFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: tweeter-logout
+      Handler: lambda/user/LogoutLambda.handler
+      Policies:
+      - AWSLambdaBasicExecutionRole
+      - AmazonSESFullAccess
+      - CloudWatchFullAccess
+      - AmazonDynamoDBFullAccess
+      - AmazonS3FullAccess
+      - AmazonSQSFullAccess
+      Events:
+        PostApi:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: tweeterApi
+            Path: /user/logout
+            Method: POST
+      CodeUri: LogoutFunction
+    Metadata:
+      SamResourceId: LogoutFunction
   followTable:
     Type: AWS::DynamoDB::Table
     Properties:
