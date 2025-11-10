@@ -4,7 +4,13 @@ exports.handler = void 0;
 const FollowService_1 = require("../../model/service/FollowService");
 const handler = async (request) => {
     const followService = new FollowService_1.FollowService();
-    const count = await followService.getFollowerCount(request.token, request.userAlias);
+    const userDto = {
+        alias: request.userAlias,
+        firstName: "",
+        lastName: "",
+        imageUrl: "",
+    };
+    const count = await followService.getFollowerCount(request.token, userDto);
     return {
         count: count
     };

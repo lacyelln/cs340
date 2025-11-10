@@ -355,6 +355,52 @@ Resources:
       CodeUri: getFollowerCountFunction
     Metadata:
       SamResourceId: getFollowerCountFunction
+  FollowFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: tweeter-follow
+      Handler: lambda/follow/FollowLambda.handler
+      Policies:
+      - AWSLambdaBasicExecutionRole
+      - AmazonSESFullAccess
+      - CloudWatchFullAccess
+      - AmazonDynamoDBFullAccess
+      - AmazonS3FullAccess
+      - AmazonSQSFullAccess
+      Events:
+        PostApi:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: tweeterApi
+            Path: /follow/gfollow
+            Method: POST
+      CodeUri: FollowFunction
+    Metadata:
+      SamResourceId: FollowFunction
+  UnfollowFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: tweeter-unfollow
+      Handler: lambda/follow/UnfollowLambda.handler
+      Policies:
+      - AWSLambdaBasicExecutionRole
+      - AmazonSESFullAccess
+      - CloudWatchFullAccess
+      - AmazonDynamoDBFullAccess
+      - AmazonS3FullAccess
+      - AmazonSQSFullAccess
+      Events:
+        PostApi:
+          Type: Api
+          Properties:
+            RestApiId:
+              Ref: tweeterApi
+            Path: /follow/unfollow
+            Method: POST
+      CodeUri: UnfollowFunction
+    Metadata:
+      SamResourceId: UnfollowFunction
   followTable:
     Type: AWS::DynamoDB::Table
     Properties:

@@ -13,14 +13,19 @@ class FollowService {
         return this.getFakeData(lastItem, pageSize, userAlias);
     }
     ;
+    async getFakeData(lastItem, pageSize, userAlias) {
+        const [items, hasMore] = tweeter_shared_1.FakeData.instance.getPageOfUsers(tweeter_shared_1.User.fromDto(lastItem), pageSize, userAlias);
+        const dtos = items.map((user) => user.dto);
+        return [dtos, hasMore];
+    }
     async getFolloweeCount(token, userAlias) {
         // TODO: Replace with the result of calling server
-        return tweeter_shared_1.FakeData.instance.getFolloweeCount(userAlias);
+        return tweeter_shared_1.FakeData.instance.getFolloweeCount(userAlias.alias);
     }
     ;
     async getFollowerCount(token, userAlias) {
         // TODO: Replace with the result of calling server
-        return tweeter_shared_1.FakeData.instance.getFollowerCount(userAlias);
+        return tweeter_shared_1.FakeData.instance.getFollowerCount(userAlias.alias);
     }
     ;
     async follow(token, userToFollow) {
@@ -46,10 +51,5 @@ class FollowService {
         return tweeter_shared_1.FakeData.instance.isFollower();
     }
     ;
-    async getFakeData(lastItem, pageSize, userAlias) {
-        const [items, hasMore] = tweeter_shared_1.FakeData.instance.getPageOfUsers(tweeter_shared_1.User.fromDto(lastItem), pageSize, userAlias);
-        const dtos = items.map((user) => user.dto);
-        return [dtos, hasMore];
-    }
 }
 exports.FollowService = FollowService;

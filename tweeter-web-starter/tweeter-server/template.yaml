@@ -244,6 +244,37 @@ Resources:
             RestApiId: !Ref tweeterApi
             Path: /follow/get-follower-count
             Method: POST
+
+  FollowFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: tweeter-follow
+      ##### Modify Handler property to match your code.
+      Handler: lambda/follow/FollowLambda.handler
+      Policies: *commonPolicies
+      Events:
+        PostApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref tweeterApi
+            Path: /follow/gfollow
+            Method: POST
+
+
+  UnfollowFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: tweeter-unfollow
+      ##### Modify Handler property to match your code.
+      Handler: lambda/follow/UnfollowLambda.handler
+      Policies: *commonPolicies
+      Events:
+        PostApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref tweeterApi
+            Path: /follow/unfollow
+            Method: POST
   #
   # ADD MORE WEB API LAMBDA DEFINITIONS HERE
   #
