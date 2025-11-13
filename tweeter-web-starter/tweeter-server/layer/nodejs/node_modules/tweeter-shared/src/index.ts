@@ -33,9 +33,11 @@ export type { GetUserRequest } from "./model/domain/net/request/GetUserRequest";
 export type { LoginRequest } from "./model/domain/net/request/LoginRequest";
 export type { RegisterRequest }from "./model/domain/net/request/RegisterRequest";
 export type { LogoutRequest }from "./model/domain/net/request/LogoutRequest";
+export type { TweeterRequest } from "./model/domain/net/request/TweeterRequest";
 //
 // Responses
 //
+export type { TweeterResponse } from "./model/domain/net/response/TweeterResponse";
 export type { PagedUserItemResponse } from "./model/domain/net/response/PagedUserItemResponse";
 export type { FollowCountResponse } from "./model/domain/net/response/FollowCountResponse";
 export type { FollowResponse } from "./model/domain/net/response/FollowResponse";

@@ -1,14 +1,22 @@
-import { LoadMoreItemsRequest, LoadMoreItemsResponse, StatusDto, UserDto } from "tweeter-shared";
+import { LoadMoreItemsRequest, LoadMoreItemsResponse, Status} from "tweeter-shared";
 import { StatusService } from "../../model/service/StatusService";
 
-export const handler = async (request: LoadMoreItemsRequest): Promise<LoadMoreItemsResponse> => {
-    const statusService = new StatusService();
+export const handler = async ( request: LoadMoreItemsRequest): Promise<LoadMoreItemsResponse> => {
+  const statusService = new StatusService();
 
-    const [items, hasMore] = await statusService.loadMoreFeedItems(request.token, request.userAlias, request.pageSize, request.lastItem);
-    return {
-        success: true, 
-        message: null, 
-        items: items, 
-        hasMore: hasMore
-    }
-}
+  const lastStatus: Status | null = Status.fromDto(request.lastItem);
+
+  const [items, hasMore] = await statusService.loadMoreFeedItems(
+    request.token,
+    request.userAlias,
+    request.pageSize,
+    lastStatus
+  );
+
+  return {
+    success: true,
+    message: null,
+    items: items.map((status) => status.dto),
+    hasMore,
+  };
+};

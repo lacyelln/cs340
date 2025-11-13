@@ -12,7 +12,9 @@ const handler = async (request) => {
     };
     const count = await followService.getFolloweeCount(request.token, userDto);
     return {
-        count: count
+        count: count,
+        success: true,
+        message: null
     };
 };
 exports.handler = handler;

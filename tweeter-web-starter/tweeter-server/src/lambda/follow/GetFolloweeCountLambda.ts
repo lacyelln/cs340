@@ -11,7 +11,9 @@ export const handler = async (request: FollowCountRequest): Promise<FollowCountR
     };
     const count = await followService.getFolloweeCount(request.token, userDto);
     return {
-        count: count
+        count: count,
+        success: true, 
+        message: null
     }
 
 }

@@ -1,14 +1,18 @@
 import { Buffer } from "buffer";
 import { AuthToken, FakeData, User } from "tweeter-shared";
 import { Service } from "./Service";
+import { ServerFacade } from "../network/ServerFacade";
 
 export class UserService implements Service{
+
+  private serverFacade = new ServerFacade();
+  
     public async getUser(
         authToken: AuthToken,
         alias: string
       ): Promise<User | null> {
         // TODO: Replace with the result of calling server
-        return FakeData.instance.findUserByAlias(alias);
+        return this.serverFacade.getUser({token: authToken.token, alias: alias});
       };
 
     public async login (
@@ -16,12 +20,14 @@ export class UserService implements Service{
       password: string
     ): Promise<[User, AuthToken]> {
       // TODO: Replace with the result of calling the server
-      const user = FakeData.instance.firstUser;
-      if (user === null) {
-        throw new Error("Invalid alias or password");
-      }
 
-      return [user, FakeData.instance.authToken];
+      return this.serverFacade.login({alias: alias, password: password});
+      // const user = FakeData.instance.firstUser;
+      // if (user === null) {
+      //   throw new Error("Invalid alias or password");
+      // }
+
+      // return [user, FakeData.instance.authToken];
     };
       
     public async Register (
@@ -33,22 +39,24 @@ export class UserService implements Service{
     imageFileExtension: string
   ): Promise<[User, AuthToken]> {
     // Not neded now, but will be needed when you make the request to the server in milestone 3
-    const imageStringBase64: string =
+    const imageBase64: string =
       Buffer.from(userImageBytes).toString("base64");
 
-    // TODO: Replace with the result of calling the server
-    const user = FakeData.instance.firstUser;
+    return this.serverFacade.register({
+      firstName,
+      lastName,
+      alias,
+      password,
+      userImageBytes: imageBase64,
+      imageFileExtension,
+    });
 
-    if (user === null) {
-      throw new Error("Invalid registration");
-    }
-
-    return [user, FakeData.instance.authToken];
+  
   };
 
   public async Logout (authToken: AuthToken): Promise<void> {
       // Pause so we can see the logging out message. Delete when the call to the server is implemented.
-      await new Promise((res) => setTimeout(res, 1000));
+      this.serverFacade.logout({token: authToken.token});
     };
 
 }

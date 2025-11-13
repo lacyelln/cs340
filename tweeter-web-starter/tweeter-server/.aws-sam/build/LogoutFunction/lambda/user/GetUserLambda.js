@@ -8,7 +8,7 @@ const handler = async (request) => {
     return {
         success: true,
         message: null,
-        user: user
+        user: user?.dto ?? null
     };
 };
 exports.handler = handler;

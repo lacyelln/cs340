@@ -25,6 +25,20 @@ export abstract class Presenter<V extends View>{
         this.view.displayErrorMessage(
           `Failed to ${operationDescription} because of exception: ${error}`
         );
+        if (error instanceof Error) {
+      console.error("Stack trace:", error.stack);
+      // Show the error message to the user (with the actual error text)
+      this.view.displayErrorMessage(
+        `Failed to ${operationDescription} because of exception: ${error.message}`
+      );
+    } else {
+      // Handle non-Error values (like strings or null)
+      this.view.displayErrorMessage(
+        `Failed to ${operationDescription} because of unexpected value: ${JSON.stringify(
+          error
+        )}`
+      );
+    }
       } finally {
         if (finallyOperation){
           finallyOperation();
