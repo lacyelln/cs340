@@ -1,0 +1,14 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.storyDAO = exports.feedDAO = exports.followsDAO = exports.statusService = exports.userService = exports.followService = void 0;
+const FollowService_1 = require("../model/service/FollowService");
+const StatusService_1 = require("../model/service/StatusService");
+const UserService_1 = require("../model/service/UserService");
+const DynamoDAOFactory_1 = require("./DynamoDAOFactory");
+const daoFactory = new DynamoDAOFactory_1.DynamoDAOFactory();
+exports.followService = new FollowService_1.FollowService(daoFactory);
+exports.userService = new UserService_1.UserService(daoFactory);
+exports.statusService = new StatusService_1.StatusService(daoFactory);
+exports.followsDAO = daoFactory.getFollowsDAO();
+exports.feedDAO = daoFactory.getFeedDAO();
+exports.storyDAO = daoFactory.getStoryDAO();
