@@ -9,6 +9,22 @@ Globals:
     - Ref: tweeterLayer
     Timeout: 30
     MemorySize: 128
+    Environment:
+      Variables:
+        USERS_TABLE:
+          Ref: usersTable
+        FOLLOW_TABLE:
+          Ref: followTable
+        STORY_TABLE:
+          Ref: storyTable
+        FEED_TABLE:
+          Ref: feedTable
+        AUTH_TOKENS_TABLE:
+          Ref: authtokensTable
+        BUCKET_NAME:
+          Ref: TweeterBucket
+        REGION:
+          Ref: AWS::Region
 Metadata:
   x-common-policies:
   - AWSLambdaBasicExecutionRole
@@ -23,6 +39,28 @@ Metadata:
     Access-Control-Allow-Origin:
       type: string
 Resources:
+  TweeterBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName:
+        Fn::Sub: tweeter-bucket-${AWS::AccountId}
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+  TweeterBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket:
+        Ref: TweeterBucket
+      PolicyDocument:
+        Statement:
+        - Effect: Allow
+          Principal: '*'
+          Action: s3:GetObject
+          Resource:
+            Fn::Sub: ${TweeterBucket.Arn}/*
   tweeterApi:
     Type: AWS::Serverless::Api
     Properties:
@@ -1264,22 +1302,74 @@ Resources:
     Properties:
       TableName: follow
       AttributeDefinitions:
-      - AttributeName: follower_alias
+      - AttributeName: follower_handle
         AttributeType: S
-      - AttributeName: followee_alias
+      - AttributeName: followee_handle
         AttributeType: S
       KeySchema:
-      - AttributeName: follower_alias
+      - AttributeName: follower_handle
         KeyType: HASH
-      - AttributeName: followee_alias
+      - AttributeName: followee_handle
         KeyType: RANGE
       BillingMode: PAY_PER_REQUEST
       GlobalSecondaryIndexes:
       - IndexName: follow_index
         KeySchema:
-        - AttributeName: followee_alias
+        - AttributeName: followee_handle
           KeyType: HASH
-        - AttributeName: follower_alias
+        - AttributeName: follower_handle
           KeyType: RANGE
         Projection:
           ProjectionType: ALL
+  usersTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: users
+      AttributeDefinitions:
+      - AttributeName: alias
+        AttributeType: S
+      KeySchema:
+      - AttributeName: alias
+        KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+  storyTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: story
+      AttributeDefinitions:
+      - AttributeName: author_alias
+        AttributeType: S
+      - AttributeName: time_stamp
+        AttributeType: N
+      KeySchema:
+      - AttributeName: author_alias
+        KeyType: HASH
+      - AttributeName: time_stamp
+        KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+  feedTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: feed
+      AttributeDefinitions:
+      - AttributeName: follower_alias
+        AttributeType: S
+      - AttributeName: time_stamp
+        AttributeType: N
+      KeySchema:
+      - AttributeName: follower_alias
+        KeyType: HASH
+      - AttributeName: time_stamp
+        KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+  authtokensTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: authtokens
+      AttributeDefinitions:
+      - AttributeName: token
+        AttributeType: S
+      KeySchema:
+      - AttributeName: token
+        KeyType: HASH
+      BillingMode: PAY_PER_REQUEST

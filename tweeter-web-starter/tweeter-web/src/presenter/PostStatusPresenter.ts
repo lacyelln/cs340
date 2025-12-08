@@ -1,4 +1,4 @@
-import { AuthToken, Status, User } from "tweeter-shared";
+import { AuthToken, PostStatusRequest, Status, User } from "tweeter-shared";
 import { StatusService } from "../model.service/StatusService";
 import { MessageView, Presenter } from "./Presenter";
 
@@ -34,7 +34,8 @@ export class PostStatusPresenter extends Presenter<PostStatusView> {
 
         const status = new Status(post, currentUser!, Date.now());
 
-        await this.service.postStatus(authToken!, status);
+
+        await this.service.postStatus(authToken, status);
 
         this.view.setPost("");
         this.view.displayInfoMessage("Status posted!", 2000);

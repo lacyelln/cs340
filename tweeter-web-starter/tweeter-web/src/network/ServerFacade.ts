@@ -25,7 +25,7 @@ import {
 import { ClientCommunicator } from "./ClientCommunicator";
 
 export class ServerFacade {
-  private SERVER_URL = "https://qt9btm253g.execute-api.us-east-1.amazonaws.com/prod";
+  private SERVER_URL = "https://yifcbw6pm7.execute-api.us-east-1.amazonaws.com/prod";
   
 
   private clientCommunicator = new ClientCommunicator(this.SERVER_URL);
@@ -223,7 +223,7 @@ export class ServerFacade {
       LoadMoreItemsResponse
     >(request, "/status/load-more-feed-items");
 
-    if (!response.success) {
+if (!response.success) {
       console.error(response);
       throw new Error(response.message ?? undefined);
     }
@@ -231,6 +231,7 @@ export class ServerFacade {
     const items =
       response.items?.map((dto) => Status.fromDto(dto) as Status) ?? [];
     return [items, response.hasMore];
+
   }
 
     public async postStatus(
@@ -239,7 +240,7 @@ export class ServerFacade {
     const response = await this.clientCommunicator.doPost<
       PostStatusRequest,
       PostStatusResponse
-    >(request, "/follow/post-status");
+    >(request, "/status/post-status");
 
 
     // Handle errors    
@@ -278,7 +279,7 @@ export class ServerFacade {
 
       public async login(
     request: LoginRequest
-  ): Promise<[User, AuthToken]> {
+  ): Promise<LoginResponse> {
     const response = await this.clientCommunicator.doPost<
       LoginRequest,
       LoginResponse
@@ -288,7 +289,13 @@ export class ServerFacade {
       if (response == null) {
         throw new Error(`Can't login user`);
       } else {
-        return [User.fromDto(response.user)!, response.token];
+            if (response.token) {
+            response.token = new AuthToken(
+              (response.token as any)._token,
+              (response.token as any)._timestamp
+            );
+          }
+        return response
       }
     } else {
       console.error(response);
@@ -298,7 +305,7 @@ export class ServerFacade {
 
     public async register(
     request: RegisterRequest
-  ): Promise<[User, AuthToken]> {
+  ): Promise<LoginResponse> {
     const response = await this.clientCommunicator.doPost<
       RegisterRequest,
       LoginResponse
@@ -308,7 +315,13 @@ export class ServerFacade {
       if (response == null) {
         throw new Error(`Can't register user`);
       } else {
-        return [User.fromDto(response.user)!, response.token];
+        if (response.token) {
+            response.token = new AuthToken(
+              (response.token as any)._token,
+              (response.token as any)._timestamp
+            );
+          }
+        return response;
       }
     } else {
       console.error(response);

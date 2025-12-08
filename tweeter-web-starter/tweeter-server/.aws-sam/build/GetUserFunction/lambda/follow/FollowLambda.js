@@ -1,16 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handler = void 0;
-const FollowService_1 = require("../../model/service/FollowService");
+const serviceFactory_1 = require("../../factories/serviceFactory");
 const handler = async (request) => {
-    const followService = new FollowService_1.FollowService();
     const userDto = {
         alias: request.userToFollow,
         firstName: "",
         lastName: "",
         imageUrl: "",
     };
-    const [followerCount, followeeCount] = await followService.follow(request.token, userDto);
+    const [followerCount, followeeCount] = await serviceFactory_1.followService.follow(request.token, userDto);
     return {
         followerCount: followerCount,
         followeeCount: followeeCount,

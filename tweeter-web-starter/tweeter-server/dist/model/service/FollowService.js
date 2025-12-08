@@ -2,53 +2,74 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FollowService = void 0;
 const tweeter_shared_1 = require("tweeter-shared");
+const AuthorizationService_1 = require("./AuthorizationService");
 class FollowService {
+    usersDAO;
+    followsDAO;
+    authorizationService;
+    constructor(daoFactory) {
+        this.usersDAO = daoFactory.getUsersDAO();
+        this.followsDAO = daoFactory.getFollowsDAO();
+        const authTokenDAO = daoFactory.getAuthTokenDAO();
+        this.authorizationService = new AuthorizationService_1.AuthorizationService(authTokenDAO);
+    }
     async loadMoreFollowees(token, userAlias, pageSize, lastItem) {
-        // TODO: Replace with the result of calling server
-        return this.getFakeData(lastItem, pageSize, userAlias);
+        await this.authorizationService.authorize(token);
+        const followees = await this.followsDAO.getFollowees(userAlias, pageSize, lastItem ?? undefined);
+        const followeeDtos = await Promise.all(followees.items.map(async (record) => {
+            const fRecord = await this.usersDAO.getUser(record.followee_handle);
+            if (!fRecord)
+                throw new Error("Followee not found");
+            const followee = new tweeter_shared_1.User(fRecord.firstName, fRecord.lastName, fRecord.alias, fRecord.imageUrl ?? null);
+            return followee.dto;
+        }));
+        return [followeeDtos, followees.hasMore];
     }
     ;
     async loadMoreFollowers(token, userAlias, pageSize, lastItem) {
-        // TODO: Replace with the result of calling server
-        return this.getFakeData(lastItem, pageSize, userAlias);
+        await this.authorizationService.authorize(token);
+        const followers = await this.followsDAO.getFollowers(userAlias, pageSize, lastItem ?? undefined);
+        const followerDtos = await Promise.all(followers.items.map(async (record) => {
+            const fRecord = await this.usersDAO.getUser(record.follower_handle);
+            if (!fRecord)
+                throw new Error("Follower not found");
+            const follower = new tweeter_shared_1.User(fRecord.firstName, fRecord.lastName, fRecord.alias, fRecord.imageUrl ?? null);
+            return follower.dto;
+        }));
+        return [followerDtos, followers.hasMore];
     }
     ;
-    async getFakeData(lastItem, pageSize, userAlias) {
-        const [items, hasMore] = tweeter_shared_1.FakeData.instance.getPageOfUsers(tweeter_shared_1.User.fromDto(lastItem), pageSize, userAlias);
-        const dtos = items.map((user) => user.dto);
-        return [dtos, hasMore];
-    }
     async getFolloweeCount(token, userAlias) {
-        // TODO: Replace with the result of calling server
-        return tweeter_shared_1.FakeData.instance.getFolloweeCount(userAlias.alias);
+        await this.authorizationService.authorize(token);
+        return await this.followsDAO.getFolloweeCount(userAlias.alias);
     }
     ;
     async getFollowerCount(token, userAlias) {
-        // TODO: Replace with the result of calling server
-        return tweeter_shared_1.FakeData.instance.getFollowerCount(userAlias.alias);
+        await this.authorizationService.authorize(token);
+        return await this.followsDAO.getFollowerCount(userAlias.alias);
     }
     ;
     async follow(token, userToFollow) {
-        // Pause so we can see the follow message. Remove when connected to the server
-        await new Promise((f) => setTimeout(f, 2000));
-        // TODO: Call the server
+        const userAlias = await this.authorizationService.authorize(token);
+        await this.followsDAO.follow(userAlias, userToFollow.alias);
         const followerCount = await this.getFollowerCount(token, userToFollow);
         const followeeCount = await this.getFolloweeCount(token, userToFollow);
         return [followerCount, followeeCount];
     }
     ;
     async unfollow(token, userToUnfollow) {
-        // Pause so we can see the unfollow message. Remove when connected to the server
-        await new Promise((f) => setTimeout(f, 2000));
-        // TODO: Call the server
+        const userAlias = await this.authorizationService.authorize(token);
+        await this.followsDAO.unfollow(userAlias, userToUnfollow.alias);
         const followerCount = await this.getFollowerCount(token, userToUnfollow);
         const followeeCount = await this.getFolloweeCount(token, userToUnfollow);
         return [followerCount, followeeCount];
     }
     ;
     async getIsFollowerStatus(token, user, selectedUser) {
-        // TODO: Replace with the result of calling server
-        return tweeter_shared_1.FakeData.instance.isFollower();
+        const userAlias = await this.authorizationService.authorize(token);
+        const pageSize = 1000;
+        const followees = await this.followsDAO.getFollowees(userAlias, pageSize);
+        return followees.items.some((record) => record.followee_handle === selectedUser.alias);
     }
     ;
 }

@@ -1,8 +1,9 @@
 import { GetIsFollowerStatusRequest, GetIsFollowerStatusResponse, UserDto } from "tweeter-shared";
 import { FollowService } from "../../model/service/FollowService";
+import { followService } from "../../factories/serviceFactory";
 
 export const handler = async (request: GetIsFollowerStatusRequest): Promise<GetIsFollowerStatusResponse> => {
-    const followService = new FollowService();
+
     const userDto: UserDto = {
         alias: request.userName,
         firstName: "",

@@ -21,13 +21,17 @@ export class UserService implements Service{
     ): Promise<[User, AuthToken]> {
       // TODO: Replace with the result of calling the server
 
-      return this.serverFacade.login({alias: alias, password: password});
-      // const user = FakeData.instance.firstUser;
-      // if (user === null) {
-      //   throw new Error("Invalid alias or password");
-      // }
+      const response = await this.serverFacade.login({alias: alias, password: password});
 
-      // return [user, FakeData.instance.authToken];
+    if (!response.success || !response.user || !response.token) {
+      throw new Error(response.message ?? "Login failed");
+    }
+
+    const user: User = User.fromDto(response.user)!;
+    const authToken: AuthToken = response.token;
+
+    return [user, authToken];
+
     };
       
     public async Register (
@@ -38,11 +42,11 @@ export class UserService implements Service{
     userImageBytes: Uint8Array,
     imageFileExtension: string
   ): Promise<[User, AuthToken]> {
-    // Not neded now, but will be needed when you make the request to the server in milestone 3
+
     const imageBase64: string =
       Buffer.from(userImageBytes).toString("base64");
 
-    return this.serverFacade.register({
+    const response = await this.serverFacade.register({
       firstName,
       lastName,
       alias,
@@ -51,6 +55,15 @@ export class UserService implements Service{
       imageFileExtension,
     });
 
+    
+    if (!response.success || !response.user || !response.token) {
+      throw new Error(response.message ?? "Login failed");
+    }
+
+    const user: User = User.fromDto(response.user)!;
+    const authToken: AuthToken = response.token;
+
+    return [user, authToken];
   
   };
 

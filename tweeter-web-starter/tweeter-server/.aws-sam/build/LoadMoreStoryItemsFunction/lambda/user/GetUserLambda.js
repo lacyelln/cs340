@@ -1,10 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handler = void 0;
-const UserService_1 = require("../../model/service/UserService");
+const serviceFactory_1 = require("../../factories/serviceFactory");
 const handler = async (request) => {
-    const userService = new UserService_1.UserService();
-    const user = await userService.getUser(request.token, request.alias);
+    const user = await serviceFactory_1.userService.getUser(request.token, request.alias);
     return {
         success: true,
         message: null,

@@ -42,7 +42,7 @@ export class StatusService implements Service{
   ): Promise<void> {
     // Pause so we can see the logging out message. Remove when connected to the server
     
-    await this.serverFacade.postStatus({token: authToken.token, newStatus: newStatus});
+    await this.serverFacade.postStatus({token: authToken.token, newStatus: newStatus.dto});
 
   };
 }

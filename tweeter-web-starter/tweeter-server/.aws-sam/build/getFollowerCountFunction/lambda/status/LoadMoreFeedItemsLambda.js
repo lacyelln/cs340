@@ -2,11 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handler = void 0;
 const tweeter_shared_1 = require("tweeter-shared");
-const StatusService_1 = require("../../model/service/StatusService");
+const serviceFactory_1 = require("../../factories/serviceFactory");
 const handler = async (request) => {
-    const statusService = new StatusService_1.StatusService();
     const lastStatus = tweeter_shared_1.Status.fromDto(request.lastItem);
-    const [items, hasMore] = await statusService.loadMoreFeedItems(request.token, request.userAlias, request.pageSize, lastStatus);
+    const [items, hasMore] = await serviceFactory_1.statusService.loadMoreFeedItems(request.token, request.userAlias, request.pageSize, lastStatus);
     return {
         success: true,
         message: null,

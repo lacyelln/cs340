@@ -1,9 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.handler = void 0;
-const FollowService_1 = require("../../model/service/FollowService");
+const serviceFactory_1 = require("../../factories/serviceFactory");
 const handler = async (request) => {
-    const followService = new FollowService_1.FollowService();
     const userDto = {
         alias: request.userName,
         firstName: "",
@@ -16,7 +15,7 @@ const handler = async (request) => {
         lastName: "",
         imageUrl: "",
     };
-    const following = await followService.getIsFollowerStatus(request.token, userDto, selectedUserDto);
+    const following = await serviceFactory_1.followService.getIsFollowerStatus(request.token, userDto, selectedUserDto);
     return {
         success: true,
         message: null,

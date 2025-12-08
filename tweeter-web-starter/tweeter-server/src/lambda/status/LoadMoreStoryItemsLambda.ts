@@ -1,8 +1,8 @@
 import { LoadMoreItemsRequest, LoadMoreItemsResponse, Status} from "tweeter-shared";
 import { StatusService } from "../../model/service/StatusService";
+import { statusService } from "../../factories/serviceFactory";
 
 export const handler = async ( request: LoadMoreItemsRequest): Promise<LoadMoreItemsResponse> => {
-  const statusService = new StatusService();
 
   const lastStatus: Status | null = Status.fromDto(request.lastItem);
 
