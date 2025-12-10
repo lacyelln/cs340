@@ -2,8 +2,10 @@ import { DeleteCommand, DynamoDBDocumentClient, GetCommand, PutCommand, QueryCom
 import { FollowPage } from "../../model/types/FollowPage";
 import { FollowsDAO } from "../interfaces/FollowsDAO";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { FollowRecord } from "../../model/types/FollowRecord";
 
 export class FollowsDAOAWS implements FollowsDAO {
+
     private readonly followsTableName = process.env.FOLLOW_TABLE!;
     private readonly usersTableName = process.env.USERS_TABLE!;
     private readonly client = DynamoDBDocumentClient.from(new DynamoDBClient({}));
@@ -156,6 +158,41 @@ export class FollowsDAOAWS implements FollowsDAO {
 
         return result.Item?.followee_count ?? 0;
     }
+
+      async getFollowersPage(
+    followeeAlias: string,
+    pageSize: number,
+    lastKey?: any
+  ): Promise<[FollowRecord[], boolean, any]> {
+    let exclusiveStartKey = undefined;
+    if (lastKey) {
+      exclusiveStartKey = {
+        followee_handle: lastKey.followee_handle,
+        follower_handle: lastKey.follower_handle
+      };
+    }
+    console.log("ExclusiveStartKey sent:", exclusiveStartKey);
+
+    const result = await this.client.send(
+      new QueryCommand({
+        TableName: this.followsTableName,
+        IndexName: "follow_index",
+        KeyConditionExpression: "followee_handle = :handle",
+        ExpressionAttributeValues: {
+          ":handle": followeeAlias,
+        },
+        Limit: pageSize,
+        ExclusiveStartKey: exclusiveStartKey,
+      })
+    );
+
+    const records = (result.Items ?? []).map((item) => ({
+      follower_handle: item.follower_handle,
+      followee_handle: item.followee_handle,
+    }));
+
+    return [records, !!result.LastEvaluatedKey, result.LastEvaluatedKey];
+  }
     
 
 }

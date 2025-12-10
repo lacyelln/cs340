@@ -49,5 +49,25 @@ class FeedDAOAWS {
         const hasMore = !!result.LastEvaluatedKey;
         return [records, hasMore, result.LastEvaluatedKey];
     }
+    async batchAddToFeeds(status, followerAliases) {
+        if (followerAliases.length === 0)
+            return;
+        const requests = followerAliases.map((followerAlias) => ({
+            PutRequest: {
+                Item: {
+                    follower_alias: followerAlias,
+                    time_stamp: status.timestamp,
+                    author_alias: status.user.alias,
+                    post: status.post,
+                },
+            },
+        }));
+        const params = {
+            RequestItems: {
+                [this.tableName]: requests,
+            },
+        };
+        await this.client.send(new lib_dynamodb_1.BatchWriteCommand(params));
+    }
 }
 exports.FeedDAOAWS = FeedDAOAWS;

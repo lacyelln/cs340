@@ -120,5 +120,30 @@ class FollowsDAOAWS {
         }));
         return result.Item?.followee_count ?? 0;
     }
+    async getFollowersPage(followeeAlias, pageSize, lastKey) {
+        let exclusiveStartKey = undefined;
+        if (lastKey) {
+            exclusiveStartKey = {
+                followee_handle: lastKey.followee_handle,
+                follower_handle: lastKey.follower_handle
+            };
+        }
+        console.log("ExclusiveStartKey sent:", exclusiveStartKey);
+        const result = await this.client.send(new lib_dynamodb_1.QueryCommand({
+            TableName: this.followsTableName,
+            IndexName: "follow_index",
+            KeyConditionExpression: "followee_handle = :handle",
+            ExpressionAttributeValues: {
+                ":handle": followeeAlias,
+            },
+            Limit: pageSize,
+            ExclusiveStartKey: exclusiveStartKey,
+        }));
+        const records = (result.Items ?? []).map((item) => ({
+            follower_handle: item.follower_handle,
+            followee_handle: item.followee_handle,
+        }));
+        return [records, !!result.LastEvaluatedKey, result.LastEvaluatedKey];
+    }
 }
 exports.FollowsDAOAWS = FollowsDAOAWS;

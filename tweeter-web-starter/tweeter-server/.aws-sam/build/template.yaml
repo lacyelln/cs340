@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: SAM config for Tweeter server
+Description: Tweeter server SAM config
 Globals:
   Function:
     Runtime: nodejs20.x
@@ -25,6 +25,8 @@ Globals:
           Ref: TweeterBucket
         REGION:
           Ref: AWS::Region
+        POST_QUEUE_URL:
+          Ref: PostQueue
 Metadata:
   x-common-policies:
   - AWSLambdaBasicExecutionRole
@@ -39,6 +41,16 @@ Metadata:
     Access-Control-Allow-Origin:
       type: string
 Resources:
+  PostQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: PostQueue
+      VisibilityTimeout: 300
+  JobQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: JobQueue
+      VisibilityTimeout: 300
   TweeterBucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -1297,6 +1309,82 @@ Resources:
       CodeUri: LogoutFunction
     Metadata:
       SamResourceId: LogoutFunction
+  postQueueProcessorFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: postQueueProcessorFunction
+      Handler: lambda/queue/PostQueueProcessorLambda.handler
+      Policies:
+      - AWSLambdaBasicExecutionRole
+      - AmazonSESFullAccess
+      - CloudWatchFullAccess
+      - AmazonDynamoDBFullAccess
+      - AmazonS3FullAccess
+      - AmazonSQSFullAccess
+      Environment:
+        Variables:
+          USERS_TABLE:
+            Ref: usersTable
+          AUTH_TOKENS_TABLE:
+            Ref: authtokensTable
+          FOLLOW_TABLE:
+            Ref: followTable
+          STORY_TABLE:
+            Ref: storyTable
+          FEED_TABLE:
+            Ref: feedTable
+          JOB_QUEUE_URL:
+            Ref: JobQueue
+      Events:
+        SQSTrigger:
+          Type: SQS
+          Properties:
+            Queue:
+              Fn::GetAtt:
+              - PostQueue
+              - Arn
+            BatchSize: 1
+            Enabled: true
+      CodeUri: postQueueProcessorFunction
+    Metadata:
+      SamResourceId: postQueueProcessorFunction
+  jobQueueProcessorFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: jobQueueProcessorFunction
+      Handler: lambda/queue/JobQueueProcessorLambda.handler
+      Policies:
+      - AWSLambdaBasicExecutionRole
+      - AmazonSESFullAccess
+      - CloudWatchFullAccess
+      - AmazonDynamoDBFullAccess
+      - AmazonS3FullAccess
+      - AmazonSQSFullAccess
+      Environment:
+        Variables:
+          USERS_TABLE:
+            Ref: usersTable
+          AUTH_TOKENS_TABLE:
+            Ref: authtokensTable
+          FOLLOW_TABLE:
+            Ref: followTable
+          STORY_TABLE:
+            Ref: storyTable
+          FEED_TABLE:
+            Ref: feedTable
+      Events:
+        SQSTrigger:
+          Type: SQS
+          Properties:
+            Queue:
+              Fn::GetAtt:
+              - JobQueue
+              - Arn
+            BatchSize: 10
+            Enabled: true
+      CodeUri: jobQueueProcessorFunction
+    Metadata:
+      SamResourceId: jobQueueProcessorFunction
   followTable:
     Type: AWS::DynamoDB::Table
     Properties:

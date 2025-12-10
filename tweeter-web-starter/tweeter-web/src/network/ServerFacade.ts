@@ -25,7 +25,7 @@ import {
 import { ClientCommunicator } from "./ClientCommunicator";
 
 export class ServerFacade {
-  private SERVER_URL = "https://yifcbw6pm7.execute-api.us-east-1.amazonaws.com/prod";
+  private SERVER_URL = "https://a682191ye5.execute-api.us-east-1.amazonaws.com/prod";
   
 
   private clientCommunicator = new ClientCommunicator(this.SERVER_URL);
@@ -162,7 +162,7 @@ export class ServerFacade {
     // Handle errors    
     if (response.success) {
       if (response == null) {
-        throw new Error(`Can't follow user`);
+        throw new Error(`Can't unfollow user`);
       } else {
         return [response.followerCount, response.followeeCount];
       }

@@ -123,6 +123,22 @@ export class FollowService {
       return [followerCount, followeeCount];
     };
 
+    public async getFollowerAliases(
+    userAlias: string,
+    pageSize: number,
+    lastKey?: any
+  ): Promise<[string[], boolean, any]> {
+    const [followRecords, hasMore, newLastKey] = await this.followsDAO.getFollowersPage(
+      userAlias,
+      pageSize,
+      lastKey
+    );
+
+    const followerAliases = followRecords.map(record => record.follower_handle);
+
+    return [followerAliases, hasMore, newLastKey];
+  }
+
     public async getIsFollowerStatus (
       token: string,
       user: UserDto,

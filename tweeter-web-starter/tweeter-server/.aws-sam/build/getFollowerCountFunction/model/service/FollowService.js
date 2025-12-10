@@ -65,6 +65,11 @@ class FollowService {
         return [followerCount, followeeCount];
     }
     ;
+    async getFollowerAliases(userAlias, pageSize, lastKey) {
+        const [followRecords, hasMore, newLastKey] = await this.followsDAO.getFollowersPage(userAlias, pageSize, lastKey);
+        const followerAliases = followRecords.map(record => record.follower_handle);
+        return [followerAliases, hasMore, newLastKey];
+    }
     async getIsFollowerStatus(token, user, selectedUser) {
         const userAlias = await this.authorizationService.authorize(token);
         const pageSize = 1000;

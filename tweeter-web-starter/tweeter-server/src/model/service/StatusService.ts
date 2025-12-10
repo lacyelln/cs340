@@ -22,7 +22,10 @@ export class StatusService {
     this.followsDAO = daoFactory.getFollowsDAO();
 
   }
-
+    public async addToStory(token: string, newStatus: Status): Promise<void> {
+    await this.authorizationService.authorize(token);
+    await this.storyDAO.addStatus(newStatus);
+  }
 
 
     public async loadMoreStoryItems (

@@ -17,6 +17,10 @@ class StatusService {
         this.storyDAO = daoFactory.getStoryDAO();
         this.followsDAO = daoFactory.getFollowsDAO();
     }
+    async addToStory(token, newStatus) {
+        await this.authorizationService.authorize(token);
+        await this.storyDAO.addStatus(newStatus);
+    }
     async loadMoreStoryItems(token, userAlias, pageSize, lastItem) {
         await this.authorizationService.authorize(token);
         const myUserRecord = await this.usersDAO.getUser(userAlias);

@@ -4,6 +4,7 @@ import { StatusRecord } from "../../model/types/StatusRecord";
 import { FeedDAO } from "../interfaces/FeedDAO";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import {
+    BatchWriteCommand,
   DynamoDBDocumentClient,
   GetCommand,
   PutCommand,
@@ -66,6 +67,32 @@ export class FeedDAOAWS implements FeedDAO{
         const hasMore = !!result.LastEvaluatedKey;
 
         return [records, hasMore, result.LastEvaluatedKey];
+    }
+
+    async batchAddToFeeds(
+        status: Status,
+        followerAliases: string[]
+    ): Promise<void> {
+        if (followerAliases.length === 0) return;
+
+        const requests = followerAliases.map((followerAlias) => ({
+        PutRequest: {
+            Item: {
+            follower_alias: followerAlias,
+            time_stamp: status.timestamp,
+            author_alias: status.user.alias,
+            post: status.post,
+            },
+        },
+        }));
+
+        const params = {
+        RequestItems: {
+            [this.tableName]: requests,
+        },
+        };
+
+        await this.client.send(new BatchWriteCommand(params));
     }
     
 }

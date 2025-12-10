@@ -73,7 +73,7 @@ export class FollowService implements Service {
     userToUnfollow: User
   ): Promise<[followerCount: number, followeeCount: number]> {
 
-  return await this.serverFacade.follow({token: authToken.token, userToFollow: userToUnfollow.alias});
+  return await this.serverFacade.unfollow({token: authToken.token, userToFollow: userToUnfollow.alias});
 };
    public async getIsFollowerStatus (
     authToken: AuthToken,
